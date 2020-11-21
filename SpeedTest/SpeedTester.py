@@ -53,7 +53,7 @@ def min_to_sec(min):
 def main():
     sec = min_to_sec(MINUTES)
 
-    for i in range(5):     
+    while True:   
         # Intervals
         time.sleep(sec)
         
