@@ -10,7 +10,7 @@ inputs measurements to a text document in format:
 '''
 Markmið: á að fá gildi fyrir dwnl upl og ping. 
 hverjar 10 min eða eh. 
-geyman gildin í töflu ásamt dag í tíma þegar gildi voru tekin.
+geyman gildin í töflu ásamt dag og tíma þegar gildi voru tekin.
 '''
 '''
 1. reikna gildi og setja í list
@@ -19,7 +19,7 @@ geyman gildin í töflu ásamt dag í tíma þegar gildi voru tekin.
 '''
 
 ### Global ###
-MINUTES = 10    # Interval of measurements
+MINUTES = 1    # Interval of measurements
 
 def speedtester():
     '''
@@ -44,7 +44,7 @@ def speedtester():
     date_string = now.strftime("%d/%m/%Y")
     time_string = now.strftime("%H:%M:%S")
 
-    data = f'{date_string}, {time_string}, {dwnl}, {upl}, {png}\n'
+    data = '{:>15} {:>15} {:>15} {:>15} {:>15}\n'.format(date_string, time_string, dwnl, upl, png)
     return data
 
 def add_data_to_file(data_string):
@@ -64,7 +64,7 @@ def main():
 
     for i in range(5):     
         # Intervals
-        time.sleep(10)
+        time.sleep(sec)
         
         # Calculations
         data = speedtester()
