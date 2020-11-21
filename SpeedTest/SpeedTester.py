@@ -7,16 +7,7 @@ Measures, download speed, upload speed and ping.
 inputs measurements to a text document in format:
 'dd/mm/yy, HR:MIN:SEC, download, upload, ping\n'
 '''
-'''
-Markmið: á að fá gildi fyrir dwnl upl og ping. 
-hverjar 10 min eða eh. 
-geyman gildin í töflu ásamt dag og tíma þegar gildi voru tekin.
-'''
-'''
-1. reikna gildi og setja í list
-2. geta reiknað gildi hverjar 10 min
-3. setja inn dagsetningu
-'''
+
 
 ### Global ###
 MINUTES = 1    # Interval of measurements
