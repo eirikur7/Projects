@@ -12,6 +12,7 @@ inputs measurements to a text document in format:
 
 ### Global ###
 MINUTES = 1    # Interval of measurements
+TEST_SPLIT = '<NEW TEST>'
 
 def speedtester():
     '''
@@ -52,7 +53,7 @@ def min_to_sec(min):
 #### Main Code ####
 def main():
     sec = min_to_sec(MINUTES)
-
+    add_data_to_file(TEST_SPLIT)
     while True:   
         # Intervals
         time.sleep(sec)
