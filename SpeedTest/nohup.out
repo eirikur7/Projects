@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "SpeedTester.py", line 64, in <module>
+    main()
+  File "SpeedTester.py", line 61, in main
+    data = speedtester()
+  File "SpeedTester.py", line 20, in speedtester
+    st = Speedtest()
+  File "/home/pi/.local/lib/python2.7/site-packages/speedtest.py", line 1091, in __init__
+    self.get_config()
+  File "/home/pi/.local/lib/python2.7/site-packages/speedtest.py", line 1123, in get_config
+    raise ConfigRetrievalError(e)
+speedtest.ConfigRetrievalError: <urlopen error [Errno -3] Temporary failure in name resolution>
