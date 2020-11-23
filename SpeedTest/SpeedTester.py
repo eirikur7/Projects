@@ -1,5 +1,5 @@
 from speedtest import Speedtest
-import time
+from time import sleep
 from datetime import datetime
 
 
@@ -8,11 +8,22 @@ Measures, download speed, upload speed and ping.
 inputs measurements to a text document in format:
 'dd/mm/yy, HR:MIN:SEC, download, upload, ping\n'
 '''
+'''
+Used a raspberry pi to do this. 
+I wanted to know wich one of my internet providers was 
+better and more consistant.
+I connected the pi to my router and ran the program remotely
+using SSH(secure shell) and github. It gathered the data in txt format then
+i switched the ethernet on the pi and ran i again for a couple of 
+days.
+'''
 
 
 ### Global ###
-MINUTES = 1    # Interval of measurements
-TEST_SPLIT = '<NEW TEST>'
+MINUTES = 10  # Interval of measurements
+TEST_SPLIT = '\n<NEW TEST>\n'
+FILENAME = input('Enter filename: ') + '.txt'
+ROUND_DATA = 2
 
 def speedtester():
     '''
@@ -25,8 +36,8 @@ def speedtester():
     upl = st.upload()
 
     # Convert download and upload speed to Mbits
-    dwnl = round(dwnl / (10**6), 2)
-    upl = round(upl / (10**6), 2)
+    dwnl = round(dwnl / (10**6), ROUND_DATA)
+    upl = round(upl / (10**6), ROUND_DATA)
 
     # measure ping in milliseconds
     png = st.results.ping
@@ -43,7 +54,7 @@ def add_data_to_file(data_string):
     '''
     Opens file, adds data, closes file
     '''
-    File_Object = open('Data_File.txt','a')
+    File_Object = open(FILENAME,'a')
     File_Object.write(data_string)
     File_Object.close()
 
@@ -53,10 +64,10 @@ def min_to_sec(min):
 #### Main Code ####
 def main():
     sec = min_to_sec(MINUTES)
-    add_data_to_file(TEST_SPLIT)
-    while True:   
+    #add_data_to_file(TEST_SPLIT)
+    while True:
         # Intervals
-        time.sleep(sec)
+        sleep(sec)
         
         # Calculations
         data = speedtester()
