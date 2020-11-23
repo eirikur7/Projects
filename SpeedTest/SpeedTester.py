@@ -22,7 +22,7 @@ days.
 ### Global ###
 MINUTES = 10  # Interval of measurements
 TEST_SPLIT = '\n<NEW TEST>\n'
-FILENAME = input('Enter filename: ') + '.txt'
+FILENAME =  'New_internet.txt' #input('Enter filename: ') + '.txt'
 ROUND_DATA = 2
 
 def speedtester():
