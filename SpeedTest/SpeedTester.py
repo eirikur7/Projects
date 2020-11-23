@@ -1,6 +1,7 @@
-import speedtest
+from speedtest import Speedtest
 import time
 from datetime import datetime
+
 
 '''
 Measures, download speed, upload speed and ping.
@@ -16,9 +17,8 @@ def speedtester():
     '''
     Gets data for internet speed. returns data as string
     '''
-    st = speedtest.Speedtest()
+    st = Speedtest()
     st.get_best_server()
-
     # measure download and upload speed in bits per second
     dwnl = st.download()
     upl = st.upload()
