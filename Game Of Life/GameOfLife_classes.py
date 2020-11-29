@@ -5,15 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib import animation, rc, cm
 rc('animation', html='html5')
 
-'''
-This was made 30/10/20, while attending first semester in programming at Reykjavik University.
-I decided to do mostly everything in classes beacause I was learning those in school at the same time.
-Covid-19 is going on right now, and in respect of John Conway I choose to do this.
-
-Til Eiríks í Framtíðinni, reyndu að gera þetta aftur og bera saman hraða. Ég held að þessi gæti verið
-hægur en það gæti bara verið talvan mín.
-P.s. ég hef ekki hugmynd hvernin animation cóðinn neðst virkar.
-'''
+"""A program that simulate John Conway's game of life"""
 
 class Board(object):
     def __init__(self, row, col, empty=False):
