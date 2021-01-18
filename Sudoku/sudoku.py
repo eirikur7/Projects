@@ -3,6 +3,24 @@ import random as rnd
 
 '''Still a work in progress'''
 
+# Breyta input, það er gallað, 
+
+    # leyfa leikmanni
+    # að breyta gildum sem hann setti inn, 
+    # en ekki breyta gildum sem voru í
+    # upprunalega borðinu
+
+    # Gera input aðeins þægilegra þetta format 
+    # er leiðinlegt að díla við
+
+    # koma með error messages í inputum
+
+# Bæta við difficulty
+    # t.d. dno
+
+# Setja intro texta í txt skjal?
+
+
 class Sudoku:
     EMPTY = '·'
     GET_MOVE = 'Enter move: '
@@ -14,24 +32,17 @@ class Sudoku:
         self.grid = np.zeros([9,9], dtype=int)
         self.counter = 1
         self.solutions = []
-        self.__MakeGrid()
-        
-    # Returns 9x9 grid
-    def __MakeGrid_tilbuid(self):
-        '''Temporary while I figure out how to make a sudoku board'''
-        self.grid = np.array([[0,0,5,3,0,0,0,0,0],
-        [8,0,0,0,0,0,0,2,0],
-        [0,0,0,0,1,0,5,0,0],
-        [4,0,0,0,0,5,3,0,0],
-        [0,1,0,0,7,0,0,0,6],
-        [0,0,3,2,0,0,0,8,0],
-        [0,6,0,5,0,0,0,0,9],
-        [0,0,4,0,0,0,0,3,0],
-        [0,0,0,0,0,9,7,0,0]])
-
-    def __MakeGrid_2(self):
-        pass
-        
+        # self.grid = np.array([[0,5,3,2,7,6,1,8,9],
+        #                     [7,9,1,3,8,4,2,6,5],
+        #                     [6,2,8,1,9,5,7,4,3],
+        #                     [8,3,5,9,6,2,4,7,1],
+        #                     [2,1,7,4,3,8,9,5,6],
+        #                     [9,4,6,7,5,1,3,2,8],
+        #                     [1,8,2,6,4,9,5,3,7],
+        #                     [3,6,4,5,1,7,8,9,2],
+        #                     [5,7,9,8,2,3,6,1,4]])
+        # self.get_solutions()
+        self.__MakeGrid() 
 
     def __MakeGrid(self):
         '''Make a sudoku board with only one solution'''
@@ -44,9 +55,10 @@ class Sudoku:
 
             self.solutions = []
             self.get_solutions()
-            print(len(self.solutions))
+
             if len(self.solutions) == 0:
                 self.grid[row][col] = 0
+                self.__MakeGrid()
             elif len(self.solutions) > 1:
                 self.__MakeGrid()
             else:
@@ -55,8 +67,8 @@ class Sudoku:
             self.__MakeGrid()
 
     def intro(self):
-        return "Input á formi '1 A1'\n þ.e. 'Tala xHnit_yHnit'\n--------LeikurByrjar--------\n"
-        
+        return "\nInput on this format '1 A1'\n--------Game Starts--------\n"
+
     def __str__(self):
         '''Returns sudoku board in a certain format'''
         table_top = ' |_A_B_C___D_E_F___G_H_I_|\n'
@@ -119,27 +131,29 @@ class Sudoku:
 
     def __possible(self, r, c, num):
         '''Check if number is possible'''
-        # checking the row
-        if num not in self.grid[r]:
-            # checking the column
-            if num not in self.__column(c):
+        # check if cell is occupied
+        if self.grid[r][c] == 0: 
+            # checking the row
+            if num not in self.grid[r]:
+                # checking the column
+                if num not in self.__column(c):
 
-                # checking the cell
-                r_0 = (r//3)*3  # r_0 and c_0, will always be
-                c_0 = (c//3)*3  # the upper left number for any cell.
+                    # checking the cell
+                    r_0 = (r//3)*3  # r_0 and c_0, will always be
+                    c_0 = (c//3)*3  # the upper left number for any cell.
 
-                for i in [0,1,2]:
-                    for j in [0,1,2]:
-                        if self.grid[r_0+i][c_0+j] == num:
-                            return False
-                return True
+                    for i in [0,1,2]:
+                        for j in [0,1,2]:
+                            if self.grid[r_0+i][c_0+j] == num:
+                                return False
+                    return True
         return False
 
     def get_solutions(self, all_solutions=False):
         '''Find how many solutions are available'''
         # Using djikstra algorithm and recursion.
         # Goes through the sudoku board and finds the solution, if more than one it quits.
-        if len(self.solutions) <= 1:
+        if len(self.solutions) <= 1 or all_solutions:
 
             # go through the board number by number
             for r in range(9):
@@ -150,36 +164,50 @@ class Sudoku:
                     # Then we call the function again. 
                     if self.grid[r][c] == 0:
                         for num in range(1,10):
+                            self.counter += 1
                             if self.__possible(r,c,num):
                                 self.grid[r][c] = num
                                 self.get_solutions()
                                 self.grid[r][c] = 0
-                            if len(self.solutions) > 1:
+                            if len(self.solutions) > 1 or all_solutions:
                                 return
                         return
         # save the solution to a list
         self.solutions.append(self.grid.copy())
 
+    def victory(self):
+        '''Check if there is a vicory in any of the solutions'''
+        for solution in self.solutions:
+            if self.grid.all() == solution.all():
+                return True
+        return False
+
+    def play_again(self):
+        '''Gets a valid input if player wants to play again'''
+        while True:
+            again = input('Want to play again (y/n): ')
+            if again.lower() in ['y', 'yes', 'yeah', 'já']:
+                return True
+            elif again.lower() in ['n', 'no', 'nah', 'hell no', 'nei']:
+                return False
+
+            print('Not valid\n')
+
     def play(self):
         '''Play the game'''
-        board = Sudoku()
-        print(board.intro())
-        while board.check_win() == False:
-            print(board)
-            row, col, number = board.get_move()
-            board.update_board(row, col, number)
-
-    def testing_make_grid(self):
-        self.__MakeGrid()
-        print(self.grid)
-
-    def test(self):
-        self.solutions = []
-        self.get_solutions()
-        print(self.solutions)
+        print(self.counter)
+        print(self.intro())
+        print(self)
+        while self.victory() == False:
+            row, col, num = self.get_move()
+            self.update_board(row, col, num)
+            print(self)
+        print('Congratulations you have won the game!!!')
+        again = self.play_again()
+        if again:
+            self.__init__()
+            self.play()
 
 
 sudoku = Sudoku()
-print(sudoku)
-sudoku.test()
-
+sudoku.play()
