@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib import animation, rc, cm
 rc('animation', html='html5')
 
-"""A program that simulate John Conway's game of life"""
+"""A program that simulates John Conway's game of life"""
 
 class Board(object):
     def __init__(self, row, col, empty=False):
@@ -17,19 +17,19 @@ class Board(object):
         self.col = col
 
         if empty:
-            self.grid = self.__MakeEmptyGrid()
+            self.grid = self._make_empty_grid()
         else:
-            self.grid = self.__MakeRandomGrid()
+            self.grid = self._make_random_grid()
         
 
-    def __MakeRandomGrid(self):
+    def _make_random_grid(self):
         '''
         Makes an array filled with random ones and 
         '''
         return np.random.randint(2, size=(self.row, self.col))
 
 
-    def __MakeEmptyGrid(self):
+    def _make_empty_grid(self):
         '''
         Makes an array filled with zeros
         '''
@@ -38,11 +38,11 @@ class Board(object):
 
 class Game(Board):
     '''Class does operation on the grids'''
-    SIZE = 30  ##### Change SIZE here #####
+    SIZE = 100  ##### Change SIZE here #####
 
-    LIVE_MIN = 2 # minimum neighbours to keep living
-    LIVE_MAX = 3 # maximum neighbours to keep living
-    DEAD_ON = 3  # Number of neighbours to resurect  
+    LIVE_MIN = 2 # minimum neighbours to keep living, def.2
+    LIVE_MAX = 3 # maximum neighbours to keep living, def.3
+    DEAD_ON = 3  # Number of neighbours to resurect,  def.3
 
     def __init__(self):
         '''
@@ -51,22 +51,35 @@ class Game(Board):
         nr.2 is used to update the grid
         '''
         self.grid_1 = Board(Game.SIZE, Game.SIZE, empty=False).grid
-        #self.grid_2 = Board(Game.SIZE, Game.SIZE, empty=True).grid
         self.grid_2 = np.zeros_like(self.grid_1)
 
+    def __str__(self):
+        '''Returns grid_2 in string format'''
+        string = ''
+        for row in self.grid_2:
+            for c in row:
+                string += str(c)
+            string += '\n'
+        return string
 
-    def __get_neighbours(self, r, c):
+    def _get_neighbours(self, r, c):
         '''
-        Calculates number of live neighbours around a given cell
-        '''
-        # [1,2,3]
-        # [4,5,6] Checks each cell from 1 --> 9
-        # [7,8,9]
-        self.total = 0
-        for rr in [-1, 0, 1]:
-            for cc in [-1, 0, 1]:
+        Calculates number of live neighbours around a given cell [r,c]
 
-                if r+rr == -1 or c+cc == -1:
+        r -> row
+        c -> column
+
+        Example:
+        # [1,2,3]   The code goes around the cell in row r and column c,
+        # [4,5,6]   and counts the number of live neighbours
+        # [7,8,9]   then it subtracts it-self
+        '''
+        self.total = 0 # Total neighbours
+
+        for rr in [-1, 0, 1]: # row
+            for cc in [-1, 0, 1]: # col
+
+                if r+rr == -1 or c+cc == -1: # edges, 
                     continue
                 elif r+rr == Game.SIZE or c+cc == Game.SIZE:
                     continue
@@ -76,7 +89,7 @@ class Game(Board):
         self.total -= self.grid_1[r][c]
 
 
-    def __update_table(self, r, c):
+    def _update_table(self, r, c):
         '''
         Table is updated with Conway's Rules
         '''
@@ -98,20 +111,14 @@ class Game(Board):
         for r in range(Game.SIZE):
             for c in range(Game.SIZE):
 
-                self.__get_neighbours(r, c)
-                self.__update_table(r, c)
+                self._get_neighbours(r, c)
+                self._update_table(r, c)
 
         self.grid_1 = copy.deepcopy(self.grid_2)
         #self.grid_1 = self.grid_2
 
 
-    def __str__(self):
-        string = ''
-        for row in self.grid_2:
-            for c in row:
-                string += str(c)
-            string += '\n'
-        return string
+
 
 
 grid = Game()
@@ -125,7 +132,7 @@ def updatefig(frame, *fargs):
 fig, ax = plt.subplots()
 ax.axis('off')
 im = plt.imshow(grid.grid_1, interpolation = "nearest", animated=True)
-anim = animation.FuncAnimation(fig, updatefig, frames=50, interval=100, blit=True)
+anim = animation.FuncAnimation(fig, updatefig, frames=100, interval=200, blit=True)
 plt.show()
 anim
 

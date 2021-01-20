@@ -2,28 +2,22 @@ from speedtest import Speedtest
 from time import sleep
 from datetime import datetime
 import matplotlib.pylab as plt
+import matplotlib.dates as pltdates
 import os
-
+import numpy as np
 
 '''
 Measures, download speed, upload speed and ping.
 inputs measurements to a text document in format:
 'dd/mm/yy, HR:MIN:SEC, download, upload, ping\n'
 '''
-'''
-Used a raspberry pi to do this. 
-I wanted to know wich one of my internet providers was 
-better and more consistant.
-I connected the pi to my router and ran the program remotely
-using SSH(secure shell) and github. It gathered the data in txt format then
-i switched the ethernet on the pi and ran it again for a couple of 
-days.
-'''
 
-class Speedtester(Speedtest):
+
+
+class Speedtester:
     ROUND_DATA = 3
 
-    def __init__(self, auto=False, interval=5, size_data=None, path='', filename='Data.txt'):
+    def __init__(self, auto=False, interval=5, size_data=None, filename='Data.txt'):
         self._dwnl = []
         self._upl = []
         self._ping = []
@@ -34,30 +28,40 @@ class Speedtester(Speedtest):
         self._counter = 0
 
         if auto:
-            self._auto_measurement(interval, size_data, path, filename)
+            self._auto_measurement(interval, size_data, filename)
 
-    def _auto_measurement(self, interval, size_data, path, filename):
-        '''Makes everything autmatic, measures and given interval,
+    def _auto_measurement(self, interval, size_data, filename):
+        '''Makes everything autmatic, measures at given interval,
         appends data to txt document and saves a plot of data'''
+        while self._counter != size_data:
+            self.measure(date=True, time=True, dwnl=True, upl=True, png=True)
+            self.data_to_file(filename)
 
-        self.measure(date=True, time=True, dwnl=True, upl=True, png=True)
-        self.data_in_txt(path, filename)
+            # interval
+            sleep(interval * 60)
 
-        # interval
-        sleep(interval * 60)
+        self._make_plot(filename=filename)
+        return
 
-        if size_data == self.counter:
-            self._make_plot(path)
-            return
+    def _make_plot(self, filename=None):
+        if filename == None:
+            filename = 'Plot'
 
-    def _make_plot(self, path):
-        plt.plot(self.time, self.dwnl, self.time, self.upl)
-        plt.title('Download and upload speed vs time')
+        time = []
+        for timestamp in self._time:
+            time.append(datetime.strptime(timestamp, "%H:%M:%S"))
+        
+    
+        plt.plot(self._time, self._dwnl, self._time, self._upl)
+
+        plt.title(f'Download and upload speed vs time')
         plt.legend(['Download', 'Upload'])
-        plt.xlabel('Time')
-        plt.ylabel('speed in Mbits/sec')
-
-        plt.savefig(path+'Data_plot.png', dpi=300, bbox_inches='tight')
+        plt.text(100, 0, self._date[0])
+        plt.xlabel('Time [sec]')
+        plt.ylabel('speed [Mbits/sec]')
+        plt.savefig(filename+'.png')
+        plt.show()
+            
 
     def measure(self, date=False, time=False, dwnl=False, upl=False, png=False):
         '''Returns following data, if true.
@@ -68,43 +72,58 @@ class Speedtester(Speedtest):
         upl  -> upload speed in Mbits
         png  -> ping in milliseconds
         '''
-        super.get_best_server()
         now = datetime.now()
+        st = Speedtest()
+        st.get_best_server()
 
         if date:
             self._date.append(now.strftime("%d/%m/%Y"))
         if time:
             self._time.append(now.strftime("%H:%M:%S"))
         if dwnl:
-            dwnl = super.download()
+            dwnl = st.download()
             self._dwnl.append(round(dwnl / (10**6), Speedtester.ROUND_DATA))
         if upl:
-            upl = super.upload()
+            upl = st.upload()
             self._upl.append(round(upl / (10**6), Speedtester.ROUND_DATA))
         if png:
-            self._ping.append(super.results.ping)
+            self._ping.append(st.results.ping)
 
-        self.counter += 1
+        self._counter += 1
         return 
 
-    def data_in_txt(self,path='', filename='Data.txt'):
+    def data_to_file(self, filename=None):
         '''Makes a txt file and appends each entry'''
+        if filename == None:
+            filename = os.path.dirname(os.path.abspath(__file__)) + '\\Data.txt'
 
-        if self.counter == 1:
-            file_stream = open(path+filename, 'a')
-            string = self._row_format.format('dd/mm/yy', 'HR:MIN:SEC', 'downl[Mbits]', 'upl[Mbits]', 'ping[ms]')
+        if self._counter == 1:
+            file_stream = open(filename+'.txt', 'a')
+            string = self._row_format.format('dd/mm/yy', 'HR:MIN:SEC', 'dwnl[Mbits]', 'upl[Mbits]', 'ping[ms]')
             file_stream.write(string)
             file_stream.close()
 
-        entry = self._row_format.format(self.date[-1], self.time[-1], self.dwnl[-1], self.upl[-1], self.ping[-1])
+        entry = self._row_format.format(self._date[-1], self._time[-1], self._dwnl[-1], self._upl[-1], self._ping[-1])
 
-        file_stream = open(path+filename, 'a')
+        file_stream = open(filename+'.txt', 'a')
         file_stream.write(entry)
         file_stream.close()
 
     def set_rounding(self, round_to):
         '''Able to change rounding of data'''
         Speedtester.ROUND_DATA = round_to
+
+    def add_data(self, data_stream):
+        '''Add existing data of the same format.
+        input must be file_object'''
+        for line in data_stream:
+            line = line.split()
+            self._date.append(line[0])
+            self._time.append(line[1])
+            self._dwnl.append(float(line[2]))
+            self._upl.append(float(line[3]))
+            self._ping.append(float(line[4]))
+
 
 
 
@@ -113,4 +132,14 @@ class Speedtester(Speedtest):
 
 #### Main Code ####
 if __name__ == '__main__':
-    pass
+    test = Speedtester()
+    test._counter = 1
+    path = os.path.dirname(os.path.abspath(__file__))
+    data = open(path+'\\Test_data.txt','r')
+    test.add_data(data)
+    test.data_to_file()
+    test._make_plot()
+
+
+
+    #test = Speedtester(auto=True, interval=0,size_data=2 filename='SpeedTest_Vodafone')
