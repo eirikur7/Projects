@@ -4,7 +4,7 @@ path = os.path.dirname(__file__)
 
 
 
-file_stream = open(path+'\\SpeedTest_Vodafone.txt', 'r')
+file_stream = open(path+'\\SpeedTest_Vodafone_2.txt', 'r')
 
 
 time = []
@@ -20,5 +20,5 @@ for row in file_stream:
     dwnl.append(float(row[2]))
     upl.append(float(row[3]))
 
-plt.plot(time, dwnl, 'o', time, upl, 'o')
+plt.plot(time, dwnl, time, upl)
 plt.show()

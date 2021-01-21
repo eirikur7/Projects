@@ -60,7 +60,6 @@ class Speedtester:
         plt.xlabel('Time [sec]')
         plt.ylabel('speed [Mbits/sec]')
         plt.savefig(filename+'.png')
-        plt.show()
             
 
     def measure(self, date=False, time=False, dwnl=False, upl=False, png=False):
@@ -132,14 +131,14 @@ class Speedtester:
 
 #### Main Code ####
 if __name__ == '__main__':
-    test = Speedtester()
-    test._counter = 1
-    path = os.path.dirname(os.path.abspath(__file__))
-    data = open(path+'\\Test_data.txt','r')
-    test.add_data(data)
-    test.data_to_file()
-    test._make_plot()
+    # test = Speedtester()
+    # test._counter = 1
+    # path = os.path.dirname(os.path.abspath(__file__))
+    # data = open(path+'\\Test_data.txt','r')
+    # test.add_data(data)
+    # test.data_to_file()
+    # test._make_plot()
 
 
 
-    #test = Speedtester(auto=True, interval=0,size_data=2 filename='SpeedTest_Vodafone')
+    test = Speedtester(auto=True, interval=0, filename='SpeedTest_Vodafone_2')
