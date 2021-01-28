@@ -4,7 +4,7 @@ path = os.path.dirname(__file__)
 
 
 
-file_stream = open(path+'\\SpeedTest_Vodafone_2.txt', 'r')
+file_stream = open(path+'\\SpeedTest_Vodafone_new_settings.txt', 'r')
 
 
 time = []

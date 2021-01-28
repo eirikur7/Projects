@@ -141,4 +141,4 @@ if __name__ == '__main__':
 
 
 
-    test = Speedtester(auto=True, interval=0, filename='SpeedTest_Vodafone_2')
+    test = Speedtester(auto=True, interval=0, filename='SpeedTest_1')
