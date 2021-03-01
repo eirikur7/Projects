@@ -38,7 +38,7 @@ class Board(object):
 
 class Game(Board):
     '''Class does operation on the grids'''
-    SIZE = 100  ##### Change SIZE here #####
+    SIZE = 70  ##### Change SIZE here #####
 
     LIVE_MIN = 2 # minimum neighbours to keep living, def.2
     LIVE_MAX = 3 # maximum neighbours to keep living, def.3
@@ -103,7 +103,6 @@ class Game(Board):
             if self.total == Game.DEAD_ON: 
                 self.grid_2[r][c] = 1
 
-
     def cycle(self):
         '''
         Call method to cycle through game one time
@@ -132,7 +131,7 @@ def updatefig(frame, *fargs):
 fig, ax = plt.subplots()
 ax.axis('off')
 im = plt.imshow(grid.grid_1, interpolation = "nearest", animated=True)
-anim = animation.FuncAnimation(fig, updatefig, frames=100, interval=200, blit=True)
+anim = animation.FuncAnimation(fig, updatefig, frames=100, interval=10, blit=True)
 plt.show()
 anim
 
